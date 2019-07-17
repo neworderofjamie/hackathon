@@ -67,7 +67,7 @@
             </LL:Annotation>
             <LL:Synapse>
                 <ConnectionList>
-                    <BinaryFile file_name="conn__to__syn0.bin" num_connections="180" explicit_delay_flag="0" packed_data="true"/>
+                    <BinaryFile file_name="conn_Red_to_RedRight_syn0.bin" num_connections="180" explicit_delay_flag="0" packed_data="true"/>
                     <Delay dimension="ms">
                         <FixedValue value="0"/>
                     </Delay>
