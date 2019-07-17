@@ -1,0 +1,6 @@
+/build/
+/log/
+/run/
+/libdifferential_drive_plugin.so
+/robot
+/simulation
