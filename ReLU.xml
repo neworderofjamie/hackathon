@@ -7,10 +7,11 @@
   <Dynamics initial_regime="integration">
    <Regime name="integration"/>
    <Alias name="out" dimension="?">
-    <MathInline>(in >0) * in</MathInline>
+    <MathInline>(in >bias) * (in - bias)</MathInline>
    </Alias>
   </Dynamics>
   <AnalogReducePort name="in" reduce_op="+" dimension="?"/>
   <AnalogSendPort name="out"/>
+  <Parameter name="bias" dimension="?"/>
  </ComponentClass>
 </SpineML>
