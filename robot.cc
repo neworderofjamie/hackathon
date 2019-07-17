@@ -2,10 +2,10 @@
 #include "common/macros.h"
 #include "common/main.h"
 #include "common/logging.h"
+#include "common/stopwatch.h"
 #include "gazebo/node.h"
-#include "hid/joystick.h"
-#include "robots/gazebo/tank.h"
-#include "video/gazebocamerainput.h"
+#include "robots/mecanum.h"
+#include "video/rpi_cam.h"
 
 // SpineML simulator includes
 #include "spineml/simulator/simulator.h"
@@ -38,18 +38,9 @@ int bob_main(int, char **)
     // Calculate number of pixels each channel will communicate
     const int numInputPixels = (cameraResolution.width / inputScale) * (cameraResolution.height / inputScale);
 
-    /************************************Gazebo setup************/
+    RPiCamera cam(50106);
 
-    // Create our node for publishing joystick values
-    gazebo::transport::NodePtr node = Gazebo::getNode();
-
-    /************************************Gazebo setup end************/
-    auto cam = std::make_unique<GazeboCameraInput>(
-        node, "/gazebo/default/differential_drive_robot/panoramic_camera/link/camera/image", true);
-
-    auto unwrapper = cam->createUnwrapper(cameraResolution);
-
-    Robots::Gazebo::Tank robot(5_rad_per_s, node); // Tank agent
+    Robots::Mecanum robot("/dev/ttyUSB0");
     HID::Joystick joystick(0.25f);
 
     // Create window to show camera image
@@ -78,7 +69,6 @@ int bob_main(int, char **)
         std::cout << "Drive forward output found!" << std::endl;
     }
 
-
     // Get external inputs used for providing sensor input to the network
     auto *cameraRed = simulator.getExternalInput("camera_red");
     auto *cameraGreen = simulator.getExternalInput("camera_green");
@@ -96,20 +86,21 @@ int bob_main(int, char **)
         std::cout << "Camera blue input found!" << std::endl;
     }
 
-    cv::Mat frame;
     cv::Mat frameUnwrapped;
     cv::Mat frameUnwrappedChannels[3];
     cv::Mat frameUnwrappedChannelsDownsampled[3];
+
+
+    Stopwatch timer;
+    timer.start();
+
     do
     {
         // Poll joystick
         joystick.update();
 
         // Read frame
-        cam->readFrame(frame);
-
-        // Unwrap
-        unwrapper.unwrap(frame, frameUnwrapped);
+        cam.readFrame(frameUnwrapped);
 
         // **HACK** horizontally flip camera image
         cv::flip(frameUnwrapped, frameUnwrapped, 1);
@@ -123,14 +114,13 @@ int bob_main(int, char **)
                     cv::Size(cameraResolution.width / inputScale, cameraResolution.height / inputScale));
         }
 
-
         // Show unwrapped frame
         cv::imshow("Camera", frameUnwrapped);
 
 
         // If camera inputs are found, transform pixels to double and inject
         if(cameraRed) {
-            std::transform(frameUnwrappedChannelsDownsampled[2].begin<uint8_t>(), frameUnwrappedChannelsDownsampled[2].end<uint8_t>(),
+            std::transform(frameUnwrappedChannelsDownsampled[0].begin<uint8_t>(), frameUnwrappedChannelsDownsampled[0].end<uint8_t>(),
                            cameraRed->getBufferBegin(), [](uint8_t pixel){ return (double)pixel / 255.0; });
         }
         if(cameraGreen) {
@@ -138,7 +128,7 @@ int bob_main(int, char **)
                            cameraGreen->getBufferBegin(), [](uint8_t pixel){ return (double)pixel / 255.0; });
         }
         if(cameraBlue) {
-            std::transform(frameUnwrappedChannelsDownsampled[0].begin<uint8_t>(), frameUnwrappedChannelsDownsampled[0].end<uint8_t>(),
+            std::transform(frameUnwrappedChannelsDownsampled[2].begin<uint8_t>(), frameUnwrappedChannelsDownsampled[2].end<uint8_t>(),
                            cameraBlue->getBufferBegin(), [](uint8_t pixel){ return (double)pixel / 255.0; });
         }
 
@@ -146,32 +136,31 @@ int bob_main(int, char **)
         simulator.stepTime();
 
         // If A is held down, drive robot with joystick
-        if(joystick.isDown(HID::JButton::A)) {
-            robot.drive(joystick);
+        if(timer.elapsed() > std::chrono::milliseconds(20)) {
+            timer.start();
+
+            if(joystick.isDown(HID::JButton::A)) {
+                robot.drive(joystick);
+            }
+            // Otherwise, if the outputs are present
+            else if(steerLeft && steerRight && driveForward) {
+                // Read steering signals
+                const float left = *steerLeft->getStateVarBegin();
+                const float right = *steerRight->getStateVarBegin();
+                const float forward = *driveForward->getStateVarBegin();
+
+                std::cout << left << "," << right << "," << forward << std::endl;
+                // Drive robot
+                robot.omni2D(0.0f, -forward * 0.5f, (right - left) * 0.5f);
+            }
         }
-        // Otherwise, if the outputs are present
-        else if(steerLeft && steerRight && driveForward) {
-            // Read steering signals
-            const float left = *steerLeft->getStateVarBegin();
-            const float right = *steerRight->getStateVarBegin();
-            const float forward = *driveForward->getStateVarBegin();
-
-            // Generate tank steering signals
-            const float tankLeft = std::min(1.0f, std::max(-1.0f, forward - right + left));
-            const float tankRight = std::min(1.0f, std::max(-1.0f, forward + right - left));
-
-            // Drive robot
-            robot.tank(tankLeft, tankRight);
-        }
-
 
         // Pump OpenCV events
         cv::waitKey(1);
     } while (!joystick.isPressed(HID::JButton::B));
 
-    // Make sure to shut everything down.
-    Gazebo::shutDown();
-    std::cout <<"Shutting down...\n";
+    std::cout << "Stopping" << std::endl;
+    robot.stopMoving();
 
     return EXIT_SUCCESS;
 }

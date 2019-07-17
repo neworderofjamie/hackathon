@@ -4,3 +4,7 @@ BoB_project(SOURCES simulation.cc
             GAZEBO_PLUGIN differential_drive_plugin.cc
             BOB_MODULES common hid robots video
             EXTERNAL_LIBS spineml_simulation)
+
+BoB_project(SOURCES robot.cc
+            BOB_MODULES common hid robots video
+            EXTERNAL_LIBS spineml_simulation)
