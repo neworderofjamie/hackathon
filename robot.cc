@@ -86,6 +86,7 @@ int bob_main(int, char **)
         std::cout << "Camera blue input found!" << std::endl;
     }
 
+    cv::Mat frameCamera;
     cv::Mat frameUnwrapped;
     cv::Mat frameUnwrappedChannels[3];
     cv::Mat frameUnwrappedChannelsDownsampled[3];
@@ -100,10 +101,10 @@ int bob_main(int, char **)
         joystick.update();
 
         // Read frame
-        cam.readFrame(frameUnwrapped);
+        cam.readFrame(frameCamera);
 
         // **HACK** horizontally flip camera image
-        cv::flip(frameUnwrapped, frameUnwrapped, 1);
+        cv::flip(frameCamera, frameUnwrapped, 1);
 
         // Split channels
         cv::split(frameUnwrapped, frameUnwrappedChannels);
