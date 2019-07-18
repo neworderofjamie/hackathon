@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="exp ramp" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="blank">
+   <Regime name="blank">
+    <TimeDerivative variable="count">
+     <MathInline>count*rate</MathInline>
+    </TimeDerivative>
+   </Regime>
+   <Alias name="out" dimension="?">
+    <MathInline>start*count</MathInline>
+   </Alias>
+   <StateVariable name="count" dimension="?"/>
+  </Dynamics>
+  <AnalogSendPort name="out"/>
+  <Parameter name="start" dimension="?"/>
+  <Parameter name="rate" dimension="?"/>
+ </ComponentClass>
+</SpineML>

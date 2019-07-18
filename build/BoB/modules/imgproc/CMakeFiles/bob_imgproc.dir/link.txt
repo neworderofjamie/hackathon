@@ -1,0 +1,2 @@
+/usr/bin/ar qc ./libbob_imgproc.a  CMakeFiles/bob_imgproc.dir/opencv_optical_flow.cc.o CMakeFiles/bob_imgproc.dir/opencv_unwrap_360.cc.o
+/usr/bin/ranlib ./libbob_imgproc.a

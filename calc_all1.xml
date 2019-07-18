@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="calc all1" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="integration">
+   <Regime name="integration">
+    <TimeDerivative variable="a">
+     <MathInline>(-a+in-r*in_rev)/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="a_slow">
+     <MathInline>(-a_slow+in_slow-r*in_slow_rev)/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="a_rev">
+     <MathInline>(-a_rev+in_rev-r*in)/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="a_slow_rev">
+     <MathInline>(-a_slow_rev+in_slow_rev-r*in_slow)/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="with_rhd_prog_smooth">
+     <MathInline>(with_rhd_prog+0*(0.1+with_rhd_prog)-with_rhd_prog_smooth)/tau_rhd</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="with_rhd_reg_smooth">
+     <MathInline>(with_rhd_reg+0*(0.01+with_rhd_reg)-with_rhd_reg_smooth)/tau_rhd</MathInline>
+    </TimeDerivative>
+    <OnCondition target_regime="integration">
+     <StateAssignment variable="a_slow">
+      <MathInline>clamp_a_slow</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>a_slow&lt;clamp_a_slow</MathInline>
+     </Trigger>
+    </OnCondition>
+    <OnCondition target_regime="integration">
+     <StateAssignment variable="a">
+      <MathInline>0</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>a&lt;clamp_a-0.001</MathInline>
+     </Trigger>
+    </OnCondition>
+    <OnCondition target_regime="integration">
+     <StateAssignment variable="a_rev">
+      <MathInline>0</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>a_rev&lt;clamp_a-0.001</MathInline>
+     </Trigger>
+    </OnCondition>
+    <OnCondition target_regime="integration">
+     <StateAssignment variable="a_slow_rev">
+      <MathInline>clamp_a_slow</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>a_slow_rev&lt;clamp_a_slow</MathInline>
+     </Trigger>
+    </OnCondition>
+   </Regime>
+   <Alias name="ratio" dimension="?">
+    <MathInline>a/(a_slow+r_f)</MathInline>
+   </Alias>
+   <Alias name="ratio_rev" dimension="?">
+    <MathInline>a_rev/(a_slow_rev+r_f)</MathInline>
+   </Alias>
+   <Alias name="rhd_prog" dimension="?">
+    <MathInline>(a_rev+a_slow_rev)</MathInline>
+   </Alias>
+   <Alias name="rhd_reg" dimension="?">
+    <MathInline>(a+a_slow)</MathInline>
+   </Alias>
+   <Alias name="with_rhd_prog" dimension="?">
+    <MathInline>(ratio-f*(rhd_diff)*(rhd_diff>0))*(ratio-f*(rhd_diff)*(rhd_diff>0)>0)</MathInline>
+   </Alias>
+   <Alias name="with_rhd_reg" dimension="?">
+    <MathInline>(ratio_rev-f*(-rhd_diff)*(rhd_diff&lt;0))*(ratio_rev-f*(-rhd_diff)*(rhd_diff&lt;0)>0)</MathInline>
+   </Alias>
+   <Alias name="diff" dimension="?">
+    <MathInline>with_rhd_prog_smooth</MathInline>
+   </Alias>
+   <Alias name="rhd_diff" dimension="?">
+    <MathInline>rhd_prog-rhd_reg</MathInline>
+   </Alias>
+   <StateVariable name="a" dimension="V"/>
+   <StateVariable name="a_slow" dimension="?"/>
+   <StateVariable name="a_rev" dimension="?"/>
+   <StateVariable name="a_slow_rev" dimension="?"/>
+   <StateVariable name="with_rhd_prog_smooth" dimension="?"/>
+   <StateVariable name="with_rhd_reg_smooth" dimension="?"/>
+  </Dynamics>
+  <AnalogReducePort name="in" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_slow" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_rev" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_slow_rev" reduce_op="+" dimension="?"/>
+  <AnalogSendPort name="diff"/>
+  <AnalogSendPort name="with_rhd_prog_smooth"/>
+  <AnalogSendPort name="with_rhd_reg_smooth"/>
+  <AnalogSendPort name="rhd_prog"/>
+  <Parameter name="tau" dimension="s"/>
+  <Parameter name="clamp_a" dimension="?"/>
+  <Parameter name="clamp_a_slow" dimension="?"/>
+  <Parameter name="r" dimension="?"/>
+  <Parameter name="f" dimension="?"/>
+  <Parameter name="tau_rhd" dimension="?"/>
+  <Parameter name="r_f" dimension="?"/>
+ </ComponentClass>
+</SpineML>

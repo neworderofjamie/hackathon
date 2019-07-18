@@ -1,0 +1,2 @@
+/usr/bin/ar qc ./libbob_hid.a  CMakeFiles/bob_hid.dir/joystick_linux.cc.o CMakeFiles/bob_hid.dir/joystick_windows.cc.o
+/usr/bin/ranlib ./libbob_hid.a

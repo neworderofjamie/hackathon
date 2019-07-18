@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="box average" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="wait">
+   <Regime name="sum">
+    <OnCondition target_regime="sum">
+     <StateAssignment variable="sum">
+      <MathInline>sum+in</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>1</MathInline>
+     </Trigger>
+    </OnCondition>
+    <OnCondition target_regime="wait">
+     <Trigger>
+      <MathInline>t > stop_t</MathInline>
+     </Trigger>
+    </OnCondition>
+   </Regime>
+   <Regime name="wait">
+    <OnCondition target_regime="sum">
+     <Trigger>
+      <MathInline>t > start_t</MathInline>
+     </Trigger>
+    </OnCondition>
+   </Regime>
+   <Alias name="out" dimension="?">
+    <MathInline>sum/(stop_t-start_t)</MathInline>
+   </Alias>
+   <StateVariable name="sum" dimension="?"/>
+  </Dynamics>
+  <AnalogReducePort name="in" reduce_op="+" dimension="?"/>
+  <AnalogSendPort name="out"/>
+  <Parameter name="start_t" dimension="?"/>
+  <Parameter name="stop_t" dimension="?"/>
+ </ComponentClass>
+</SpineML>

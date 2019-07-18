@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="angle to ring" type="weight_update">
+  <Annotation>
+   <SpineCreator>
+    <Text key="out"></Text>
+    <Text key="w"></Text>
+   </SpineCreator>
+  </Annotation>
+  <Dynamics initial_regime="blank">
+   <Regime name="blank">
+    <OnCondition target_regime="blank">
+     <StateAssignment variable="out">
+      <MathInline>(-(in-ang-floor((in-ang)/360.0)*360.0-180.0))/180.0</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>(in-ang-floor((in-ang)/360.0)*360.0-180.0) &lt;=0</MathInline>
+     </Trigger>
+    </OnCondition>
+    <OnCondition target_regime="blank">
+     <StateAssignment variable="out">
+      <MathInline>((in-ang-floor((in-ang)/360.0)*360.0-180.0))/180.0</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>(in-ang-floor((in-ang)/360.0)*360.0-180.0) > 0  </MathInline>
+     </Trigger>
+    </OnCondition>
+   </Regime>
+   <StateVariable name="out" dimension="?"/>
+  </Dynamics>
+  <AnalogReducePort name="in" reduce_op="+" dimension="?"/>
+  <AnalogSendPort name="out"/>
+  <Parameter name="ang" dimension="?"/>
+ </ComponentClass>
+</SpineML>

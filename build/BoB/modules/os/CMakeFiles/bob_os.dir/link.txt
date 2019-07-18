@@ -1,0 +1,2 @@
+/usr/bin/ar qc ./libbob_os.a  CMakeFiles/bob_os.dir/net.cc.o CMakeFiles/bob_os.dir/screen.cc.o CMakeFiles/bob_os.dir/video.cc.o
+/usr/bin/ranlib ./libbob_os.a

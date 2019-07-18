@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="rhdapply" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="dummy">
+   <Regime name="dummy">
+    <TimeDerivative variable="out">
+     <MathInline>(in*(0.1+in)-out)/tau</MathInline>
+    </TimeDerivative>
+   </Regime>
+   <Alias name="in" dimension="?">
+    <MathInline>(in_1-f*(in_3-in_2)*(in_3-in_2>0))*(in_1-f*(in_3-in_2)*(in_3-in_2>0)>0)</MathInline>
+   </Alias>
+   <StateVariable name="out" dimension="?"/>
+  </Dynamics>
+  <AnalogReducePort name="in_1" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_2" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_3" reduce_op="+" dimension="?"/>
+  <AnalogSendPort name="out"/>
+  <Parameter name="f" dimension="?"/>
+  <Parameter name="tau" dimension="?"/>
+ </ComponentClass>
+</SpineML>

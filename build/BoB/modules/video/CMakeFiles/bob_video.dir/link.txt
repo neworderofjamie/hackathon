@@ -1,0 +1,2 @@
+/usr/bin/ar qc ./libbob_video.a  CMakeFiles/bob_video.dir/display.cc.o CMakeFiles/bob_video.dir/input.cc.o CMakeFiles/bob_video.dir/netsink.cc.o CMakeFiles/bob_video.dir/netsource.cc.o CMakeFiles/bob_video.dir/opencvinput.cc.o CMakeFiles/bob_video.dir/panoramic.cc.o CMakeFiles/bob_video.dir/rpi_cam.cc.o CMakeFiles/bob_video.dir/see3cam_cu40.cc.o CMakeFiles/bob_video.dir/v4l_camera.cc.o
+/usr/bin/ranlib ./libbob_video.a

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="LIF" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="integration">
+   <Regime name="integration">
+    <TimeDerivative variable="a">
+     <MathInline>(-a-adap+in*(in>0))/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="adap">
+     <MathInline>(in*(in>0)-adap)/tau_adap</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="a_neg">
+     <MathInline>(-a_neg-adap_neg+in*(in&lt;0))/tau</MathInline>
+    </TimeDerivative>
+    <TimeDerivative variable="adap_neg">
+     <MathInline>(in*(in&lt;0)-adap_neg)/tau_adap</MathInline>
+    </TimeDerivative>
+    <OnCondition target_regime="integration">
+     <StateAssignment variable="a">
+      <MathInline>(in>0 &amp;&amp; prev_in>0)*a</MathInline>
+     </StateAssignment>
+     <StateAssignment variable="adap">
+      <MathInline>(in>0 &amp;&amp; prev_in>0)*adap + !(in>0 &amp;&amp; prev_in>0)*in</MathInline>
+     </StateAssignment>
+     <StateAssignment variable="a_neg">
+      <MathInline>(in&lt;0 &amp;&amp; prev_in&lt;0)*a_neg</MathInline>
+     </StateAssignment>
+     <StateAssignment variable="adap_neg">
+      <MathInline>(in&lt;0 &amp;&amp; prev_in&lt;0)*adap_neg + !(in&lt;0 &amp;&amp; prev_in&lt;0)*in</MathInline>
+     </StateAssignment>
+     <StateAssignment variable="out">
+      <MathInline>a*(a>0)+a_neg*(a_neg&lt;0)</MathInline>
+     </StateAssignment>
+     <StateAssignment variable="prev_in">
+      <MathInline>in</MathInline>
+     </StateAssignment>
+     <Trigger>
+      <MathInline>1</MathInline>
+     </Trigger>
+    </OnCondition>
+   </Regime>
+   <Alias name="la" dimension="?">
+    <MathInline>m*a+c</MathInline>
+   </Alias>
+   <StateVariable name="a" dimension="V"/>
+   <StateVariable name="adap" dimension="?"/>
+   <StateVariable name="out" dimension="?"/>
+   <StateVariable name="a_neg" dimension="?"/>
+   <StateVariable name="adap_neg" dimension="?"/>
+   <StateVariable name="prev_in" dimension="?"/>
+  </Dynamics>
+  <AnalogSendPort name="out"/>
+  <AnalogReducePort name="in" reduce_op="+" dimension="?"/>
+  <Parameter name="tau" dimension="s"/>
+  <Parameter name="m" dimension="?"/>
+  <Parameter name="c" dimension="?"/>
+  <Parameter name="tau_adap" dimension="?"/>
+ </ComponentClass>
+</SpineML>

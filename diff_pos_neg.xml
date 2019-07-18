@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<SpineML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.shef.ac.uk/SpineMLComponentLayer" xsi:schemaLocation="http://www.shef.ac.uk/SpineMLComponentLayer SpineMLComponentLayer.xsd">
+ <ComponentClass name="diff pos neg" type="neuron_body">
+  <Annotation>
+   <SpineCreator/>
+  </Annotation>
+  <Dynamics initial_regime="dummy">
+   <Regime name="dummy"/>
+   <Alias name="out" dimension="?">
+    <MathInline>(in_1-in_2)*(in_1-in_2>0)</MathInline>
+   </Alias>
+   <Alias name="out2" dimension="?">
+    <MathInline>(in_2-in_1)*(in_2-in_1>0)</MathInline>
+   </Alias>
+  </Dynamics>
+  <AnalogReducePort name="in_1" reduce_op="+" dimension="?"/>
+  <AnalogReducePort name="in_2" reduce_op="+" dimension="?"/>
+  <AnalogSendPort name="out"/>
+  <AnalogSendPort name="out2"/>
+ </ComponentClass>
+</SpineML>

@@ -1,0 +1,2 @@
+/usr/bin/ar qc ./libbob_net.a  CMakeFiles/bob_net.dir/client.cc.o CMakeFiles/bob_net.dir/connection.cc.o CMakeFiles/bob_net.dir/imu_netsource.cc.o CMakeFiles/bob_net.dir/server.cc.o CMakeFiles/bob_net.dir/socket.cc.o
+/usr/bin/ranlib ./libbob_net.a
